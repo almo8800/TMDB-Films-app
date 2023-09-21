@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bucket
+   uuid = "3FEDC711-606F-4AFE-8566-7375E667041B"
+   type = "0"
+   version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "1A4B5A3A-A3AE-4336-AD0E-B405D1CC4E5F"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "pet-TMDB-app/FilmsController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "unknown"
+            landmarkType = "0">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "7BA1A0C8-2E98-4616-A107-916888DF59B1"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "pet-TMDB-app/Scenes/Feed/FeedViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "215"
+            endingLineNumber = "215"
+            landmarkName = "configureDataSource()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "7BA1A0C8-2E98-4616-A107-916888DF59B1 - 96635f6c3e81ce2e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "pet_TMDB_app.FeedViewController.configureDataSource() -&gt; ()"
+                  moduleName = "pet-TMDB-app"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/AlexMokrousov/Documents/SWIFT/pet-TMDB-app/pet-TMDB-app/Scenes/Feed/FeedViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "215"
+                  endingLineNumber = "215"
+                  offsetFromSymbolStart = "1532">
+               </Location>
+               <Location
+                  uuid = "7BA1A0C8-2E98-4616-A107-916888DF59B1 - da6a6c30b2d1a2f3"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #5 (pet_TMDB_app.FilmsController.FilmCollection) -&gt; () in pet_TMDB_app.FeedViewController.configureDataSource() -&gt; ()"
+                  moduleName = "pet-TMDB-app"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/AlexMokrousov/Documents/SWIFT/pet-TMDB-app/pet-TMDB-app/Scenes/Feed/FeedViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "216"
+                  endingLineNumber = "216"
+                  offsetFromSymbolStart = "212">
+               </Location>
+               <Location
+                  uuid = "7BA1A0C8-2E98-4616-A107-916888DF59B1 - 96635f6c3e81ce0f"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "pet_TMDB_app.FeedViewController.configureDataSource() -&gt; ()"
+                  moduleName = "pet-TMDB-app"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/AlexMokrousov/Documents/SWIFT/pet-TMDB-app/pet-TMDB-app/Scenes/Feed/FeedViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "216"
+                  endingLineNumber = "216"
+                  offsetFromSymbolStart = "1532">
+               </Location>
+               <Location
+                  uuid = "7BA1A0C8-2E98-4616-A107-916888DF59B1 - da6a6c30b2d1a294"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #5 (pet_TMDB_app.FilmsController.FilmCollection) -&gt; () in pet_TMDB_app.FeedViewController.configureDataSource() -&gt; ()"
+                  moduleName = "pet-TMDB-app"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/AlexMokrousov/Documents/SWIFT/pet-TMDB-app/pet-TMDB-app/Scenes/Feed/FeedViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "217"
+                  endingLineNumber = "217"
+                  offsetFromSymbolStart = "212">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
+</Bucket>
