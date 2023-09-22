@@ -33,15 +33,19 @@ extension FilmApiResponse: Decodable {
     }
 }
 
+// в идеале Film модель отдельно для то что приходит с сервера
+// и отдельно filmModel для UI 
+
 struct Film: Hashable {
     let id: Int
     let posterPath: String
-    let backdrop: String
+    let backdrop: String // /tmU7GeKVybMWFButWEGl2M4GeiP.jpg
     let title: String
     let releaseDate: String
     let rating: Double
     let overview: String
     
+    // точно ли нужен identifier тут, если есть ID
     let identifier = UUID()
     func hash(into hasher: inout Hasher) {
         hasher.combine(identifier)

@@ -3,15 +3,17 @@
 import UIKit
 import RxSwift
 import RxCocoa
+import Kingfisher
 
-class FeedViewController: UIViewController {
+class FeedViewController: UIViewController, Coordinating {
+    var coordinator: Coordinator?
+    
     let viewModel: FilmsViewModel
     
-    // MARK: - UI
+    // MARK: - UI Setup
     
     private lazy var navigationTitleView: UIView = {
         let imageView = UIImageView()
-        
         imageView.image = UIImage(named: "playstation.logo")
         imageView.contentMode = .scaleAspectFit
         
@@ -21,11 +23,8 @@ class FeedViewController: UIViewController {
     private lazy var searchBarButtonItem: UIBarButtonItem = {
         let item = UIBarButtonItem(image: UIImage(named: "magnifyingglass.circle.fill"), style: .plain, target: nil, action: nil)
         item.tintColor = .black
-        
         item.rx.tap
             .bind { [unowned self] (_) in
-                
-                self.viewModel.searchButtonTrigger()
         }.disposed(by: disposeBag)
         
         return item
@@ -35,19 +34,14 @@ class FeedViewController: UIViewController {
     private let disposeBag = DisposeBag()
     
     var networkManager: NetworkManager!
-    
-    let videosController = FilmsController()
-    var collectionView: UICollectionView! = nil
-    
-//    var dataSource: UICollectionViewDiffableDataSource
-//        <FilmsController.FilmCollection, FilmsController.Film>! = nil
-//    var currentSnapshot: NSDiffableDataSourceSnapshot
-//        <FilmsController.FilmCollection, FilmsController.Film>! = nil
+    var collectionView: UICollectionView!
+  
+    var delegate: FeedControllerDelegate?
     
     var dataSource: UICollectionViewDiffableDataSource
-        <FilmsController.FilmCollection, Film>! = nil
+        <TopratedFilmsDataSet.FilmCollection, Film>! = nil
     var currentSnapshot: NSDiffableDataSourceSnapshot
-        <FilmsController.FilmCollection, Film>! = nil
+        <TopratedFilmsDataSet.FilmCollection, Film>! = nil
     
     
     static let titleElementKind = "title-element-kind"
@@ -55,11 +49,9 @@ class FeedViewController: UIViewController {
     // MARK: - Overriden methods
     
     init(viewModel: FilmsViewModel) {
-        
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
         
-        self.networkManager = NetworkManager()
     }
     
     required init?(coder: NSCoder) {
@@ -73,25 +65,18 @@ class FeedViewController: UIViewController {
         
         viewModel.viewDidLoadTrigger()
         
-        networkManager.getTopRated(page: 1) { films, error in
-            if let error = error {
-                print(error)
-            }
-            if let films = films {
-                print(films)  
-            }
-        }
-        
-        
         setupUI()
+        bind()
         configureHierarchy()
         configureDataSource()
+        updateSnapshot()
+        
+        
     }
     
     // MARK: - UI Setuo
     func setupUI() {
         setupNavBarItems()
-        
 }
     
     private func setupNavBarItems() {
@@ -103,7 +88,30 @@ class FeedViewController: UIViewController {
         let barButtonItem = UIBarButtonItem(customView: button)
         navigationItem.rightBarButtonItems = [barButtonItem]
     }
-}
+    
+    func bind() {
+        viewModel.sectionItems
+            .observe(on: MainScheduler.instance)
+            .bind { [unowned self] (items) in
+                
+                configureHierarchy()
+                configureDataSource()
+                updateSnapshot()
+
+                
+                collectionView.delegate = self
+                
+            }.disposed(by: disposeBag)
+        
+        viewModel.openFilm
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] film in
+                guard let film = film else { return }
+                coordinator?.eventOccured(with: .openDetails(film))
+            }).disposed(by: disposeBag)
+            }
+    }
+
 
 extension FeedViewController {
     func createLayout() -> UICollectionViewLayout {
@@ -165,30 +173,26 @@ extension FeedViewController {
         let cellRegistration = UICollectionView.CellRegistration
         <FilmCell, Film> { (cell, IndexPath, video) in
             // Populate the cell with our item description.
+            
             cell.titleLabel.text = video.title
             cell.categoryLabel.text = video.overview
+            
+            let url = URL(string: "\(FilmApi.baseImageURL)\(video.backdrop)")
+            cell.imageView.kf.setImage(with: url)
+            
+            cell.contentView.isUserInteractionEnabled = false
+            // поставить placeHolder в KingFisher (или в ячейке картинку по дефолту)
         }
         
-//        let cellRegistrationXXX = UICollectionView.CellRegistration
-//        <FilmCell, FilmsController.FilmOld> { (cell, indexPath, video) in
-//            // Populate the cell with our item description.
-//            cell.titleLabel.text = video.title
-//            cell.categoryLabel.text = video.category
-//        }
-        
         dataSource = UICollectionViewDiffableDataSource
-        <FilmsController.FilmCollection, Film>(collectionView: collectionView) {
+        
+        
+       
+        <TopratedFilmsDataSet.FilmCollection, Film>(collectionView: collectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, video: Film) -> UICollectionViewCell? in
             // Return the cell.
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: video)
         }
-        
-//        dataSource = UICollectionViewDiffableDataSource
-//        <FilmsController.FilmCollection, FilmsController.FilmOld>(collectionView: collectionView) {
-//            (collectionView: UICollectionView, indexPath: IndexPath, video: FilmsController.Film) -> UICollectionViewCell? in
-//            // Return the cell.
-//            return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: video)
-//        }
         
         let supplementaryRegistration = UICollectionView.SupplementaryRegistration
         <TitleSupplementaryView>(elementKind: FeedViewController.titleElementKind) {
@@ -205,21 +209,44 @@ extension FeedViewController {
                 using: supplementaryRegistration, for: index)
         }
         
-        currentSnapshot = NSDiffableDataSourceSnapshot
-            <FilmsController.FilmCollection, Film>()
-//        videosController.collections.forEach {
-//            let collection = $0
-//            currentSnapshot.appendSections([collection])
-//            currentSnapshot.appendItems(collection.videos)
-//        }
-        
-        videosController.collections.forEach {
+//        currentSnapshot = NSDiffableDataSourceSnapshot
+//        <TopratedFilmsDataSet.FilmCollection, Film>()
+//
+//            viewModel.collections.forEach {
+//                let collection = $0
+//                currentSnapshot.appendSections([collection])
+//                currentSnapshot.appendItems(collection.videos)
+//            }
+//            dataSource.apply(currentSnapshot, animatingDifferences: false)
+    }
+    
+    func updateSnapshot() {
+    currentSnapshot = NSDiffableDataSourceSnapshot
+    <TopratedFilmsDataSet.FilmCollection, Film>()
+    
+        viewModel.collections.forEach {
             let collection = $0
             currentSnapshot.appendSections([collection])
             currentSnapshot.appendItems(collection.videos)
         }
-        
-        
         dataSource.apply(currentSnapshot, animatingDifferences: false)
     }
+
+}
+
+extension FeedViewController: UICollectionViewDelegate {
+   
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let filmIndex = indexPath[1]
+        viewModel.didSelectFilm(index: filmIndex)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        if indexPath.row == viewModel.topRatedFilms.fetchedFilms.count-2 {
+            // fetchedFilms отдавать вo ViewModel сразу?
+            viewModel.paginateFilms()
+            
+        }
+    }
+    
 }

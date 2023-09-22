@@ -10,58 +10,77 @@ import RxSwift
 import RxCocoa
 
 class FilmsViewModel {
+    
     //MARK: - Binding properties
-    var openSearch: Observable<Void> {
-        return openSearchPublisher.asObservable()
+    var openFilm: Observable<Film?> {
+        return openFilmPublisher.asObservable()
     }
     
+    var sectionItems: Observable<[TopratedFilmsDataSet.FilmCollection]> {
+        return sectionItemsPublisher.asObservable()
+    }
+
     
     //MARK: - Properties
-    let networkManager: NetworkManager!
+    let networkManager: NetworkManager
+    let topRatedFilms: TopratedFilmsDataSet
     
-    private let openSearchPublisher = PublishSubject<Void>()
+    private(set) var collections: [TopratedFilmsDataSet.FilmCollection] = [] {
+        didSet {
+            sectionItemsPublisher.onNext(collections)
+        }
+    }
     
+    private let sectionItemsPublisher = PublishSubject<[TopratedFilmsDataSet.FilmCollection]>()
+    private let openFilmPublisher = BehaviorSubject<Film?>(value: nil)
     
     
     //MARK: - Lifecycle
     init(networkManager: NetworkManager) {
         self.networkManager = networkManager
+        topRatedFilms = .init(networkManager: networkManager)
+        setupDataSetBindings()
     }
     
     
     //MARK: - Private methods
     
-    func fetchFilms() {
-        networkManager.getTopRated(page: 1) { films, error in
-            if let error = error {
-                print(error)
-            }
-            if let films = films {
-                self.fetchedFilms.append(contentsOf: films)
-            }
-        }
-    }
-    
-    func updateSection() {
-        // sections.append
-    }
+              
     
     //MARK: - Input
     func viewDidLoadTrigger() {
-        //fetchFilms()
+        loadContent()
     }
     
-    func searchButtonTrigger() {
-        openSearchPublisher.onNext(())
-    }
-    
-    //MARK: - Output
-    private(set) var fetchedFilms: [Film] = [] {
-        didSet {
-            updateData()
+    func didSelectFilm(index: Int) {
+        guard index >= 0, index < topRatedFilms.fetchedFilms.count else {
+            return
         }
+        
+        openFilmPublisher.onNext(topRatedFilms.fetchedFilms[index])
     }
     
-    func updateData() {}
+    func paginateFilms() {
+       loadContent()
+    }
     
+    //MARK: - Private Methods
+    
+    func loadContent() {
+        topRatedFilms.fetchNextPage()
+    }
+}
+
+private extension FilmsViewModel {
+    func setupDataSetBindings() {
+        topRatedFilms.updated
+            .bind(onNext: { [unowned self] _ in
+               generateSections()
+            })
+    }
+    
+    func generateSections() {
+        self.collections = [TopratedFilmsDataSet.FilmCollection(
+            title: "Top Rated", videos: topRatedFilms.fetchedFilms)]
+    }
 }

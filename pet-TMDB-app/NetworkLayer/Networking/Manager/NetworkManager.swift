@@ -7,8 +7,13 @@
 
 import Foundation
 
-class NetworkManager { // был struct
-    //static let environment: NetworkEnvironment = .production
+protocol DataManager: AnyObject {
+    func getTopRated(page: Int, completion: @escaping (_ films: [Film]?, _ error: String?) -> ())
+}
+
+class NetworkManager: DataManager {
+
+    
     
     static let FilmApiKey = "97ce674a2512f3775937124ebb519f23"
     let router = Router<FilmApi>()

@@ -7,6 +7,7 @@
 
 import Foundation
 
+
 //enum NetworkEnvironment {
 //    case qa
 //    case production
@@ -22,16 +23,13 @@ public enum FilmApi {
 
 extension FilmApi: EndPointType {
     
-//    var environmentBaseURL : String {
-//        switch NetworkManager.environment {
-//        case .production: return "https://api.themoviedb.org/3/movie/"
-//        case .qa: return "https://qa.themoviedb.org/3/movie/"
-//        case .staging: return "https://staging.themoviedb.org/3/movie/"
-//        }
-//    }
-    
     var baseURL: URL {
         guard let url = URL(string: "https://api.themoviedb.org/3/movie/") else { fatalError("baseURL could not be configured.")}
+        return url
+    }
+    
+    static var baseImageURL: URL {
+        guard let url = URL(string: "https://image.tmdb.org/t/p/w500/") else { fatalError("baseURL could not be configured.")}
         return url
     }
     
