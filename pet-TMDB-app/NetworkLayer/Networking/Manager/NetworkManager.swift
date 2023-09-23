@@ -8,16 +8,16 @@
 import Foundation
 
 protocol DataManager: AnyObject {
-    func getTopRated(page: Int, completion: @escaping (_ films: [Film]?, _ error: String?) -> ())
+    func getPopularFilms(page: Int, completion: @escaping (_ films: [Film]?, _ error: String?) -> ())
 }
 
 class NetworkManager: DataManager {
-
     
+    static let shared = NetworkManager()
+    private init() {}
     
     static let FilmApiKey = "97ce674a2512f3775937124ebb519f23"
     let router = Router<FilmApi>()
-    
     
     enum NetworkResponse: String {
         case success
@@ -44,15 +44,13 @@ class NetworkManager: DataManager {
         }
     }
     
-    func getTopRated(page: Int, completion: @escaping (_ films: [Film]?, _ error: String?) -> ()) {
-        
-        router.request(.newMovies(page: page)) { data, response, error in
+    func getPopularFilms(page: Int, completion: @escaping (_ films: [Film]?, _ error: String?) -> ()) {
+        router.request(.popular(page: page)) { data, response, error in
             if error != nil {
                 completion(nil, "Please check your network connection")
             }
             
             if let response = response as? HTTPURLResponse {
-                
                 let result = self.handleNetworkResponse(response)
                 
                 switch result {
@@ -61,7 +59,6 @@ class NetworkManager: DataManager {
                         completion(nil, NetworkResponse.noData.rawValue)
                         return
                     }
-                    
                     do {
                         let apiResponse = try JSONDecoder().decode(FilmApiResponse.self, from: responseData)
                         completion(apiResponse.movies, nil)
@@ -75,4 +72,36 @@ class NetworkManager: DataManager {
             }
         }
     }
+    
+    func getFilmDetails(id: Int, completion: @escaping (_ details: FilmDetailsApiResponse?, _ error: String?) -> ()) {
+        print(id)
+        router.request(.details(id: id)) { data, response, error in
+            if error != nil {
+                completion(nil, "Please check your network connection")
+            }
+
+            if let response = response as? HTTPURLResponse {
+                let result = self.handleNetworkResponse(response)
+
+                switch result {
+                case .success:
+                    guard let responseData = data else {
+                        completion(nil, NetworkResponse.noData.rawValue)
+                        return
+                    }
+                    do {
+                        let apiResponse = try JSONDecoder().decode(FilmDetailsApiResponse.self, from: responseData)
+                        completion(apiResponse.self, nil)
+                    } catch {
+                        completion(nil, NetworkResponse.unableToDecode.rawValue)
+                    }
+                case .failure(let networkFailureError):
+                    completion(nil, networkFailureError)
+                }
+            }
+
+        }
+    }
 }
+
+

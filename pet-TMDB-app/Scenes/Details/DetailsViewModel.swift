@@ -6,26 +6,50 @@
 //
 
 import Foundation
+import RxSwift
+import RxCocoa
 
 class DetailsViewModel {
     
+    var filmObservable: Observable<Void> {
+        return filmDetailsPublisher.asObservable()
+    }
+
     //MARK: - Properties
-    let dataManager: DataManager!
-    let film: Film
     
+    let networkManager: NetworkManager!
+    let filmId: Int
+    var filmDetails: FilmDetailsApiResponse? {
+        didSet {
+            if self.filmDetails != nil {
+                filmDetailsPublisher.onNext(())
+            }
+        }
+    }
+    
+    private let filmDetailsPublisher = PublishSubject<Void>()
     
     // MARK: - Life cycle
     
-    init(dataManager: DataManager,
+    init(networkManager: NetworkManager,
          film: Film) {
-        self.dataManager = dataManager
-        self.film = film 
+        self.networkManager = networkManager
+        self.filmId = film.id
+        downloadFilmDetails()
         
-        setupDataSetBindings()
     }
     
-    func setupDataSetBindings() {
-        
+    func downloadFilmDetails() {
+        networkManager.getFilmDetails(id: filmId) { details, error in
+            if let error = error {
+                print(error)
+            }
+            if let details = details {
+                self.filmDetails = details
+            }
+        }
     }
+    
+    
     
 }

@@ -10,28 +10,21 @@ import UIKit
 
 class MainCoordinator: Coordinator {
     var navigationController: UINavigationController?
+    var networkManager = NetworkManager.shared
     
     func eventOccured(with type: Event) {
         switch type {
         case .openDetails(let film):
-            let networkService = NetworkManager()
-            let viewModel = DetailsViewModel(dataManager: networkService, film: film)
+            let viewModel = DetailsViewModel(networkManager: networkManager, film: film)
             let vc: UIViewController & Coordinating = DetailsViewController(viewModel: viewModel)
             navigationController?.present(vc, animated: true)
         }
     }
     
-    
-    
     func start() {
-        let networkMGMT = NetworkManager()
-        let filmsViewModel = FilmsViewModel(networkManager: networkMGMT)
+        let filmsViewModel = FilmsViewModel(networkManager: networkManager)
         var feedViewController: UIViewController & Coordinating = FeedViewController(viewModel: filmsViewModel)
-        
         feedViewController.coordinator = self
-        
-        
-        
         navigationController?.setViewControllers([feedViewController], animated: false)
     }
     

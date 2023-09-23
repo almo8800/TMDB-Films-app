@@ -7,18 +7,11 @@
 
 import Foundation
 
-
-//enum NetworkEnvironment {
-//    case qa
-//    case production
-//    case staging
-//}
-
 public enum FilmApi {
-    case recommended(id: Int)
+
     case popular(page: Int)
-    case newMovies(page: Int)
-    case video(id: Int)
+    case details(id: Int)
+
 }
 
 extension FilmApi: EndPointType {
@@ -35,14 +28,10 @@ extension FilmApi: EndPointType {
     
     var path: String {
         switch self {
-        case .recommended(let id):
-            return "\(id)/recommendations"
         case .popular:
             return "popular"
-        case .newMovies:
-            return "now_playing"
-        case .video(let id):
-            return "\(id)/videos"
+        case .details(let id):
+            return "\(id)"
         }
     }
     
@@ -52,12 +41,14 @@ extension FilmApi: EndPointType {
     
     var task: HTTPTask {
         switch self {
-        case .newMovies(let page):
+        case .popular(let page):
             return .requestParameters(bodyParameters: nil,
                                       urlParameters: ["page": page,
                                                       "api_key": NetworkManager.FilmApiKey])
-        default:
-            return .request
+        case .details(_):
+            return .requestParameters(bodyParameters: nil,
+                                      urlParameters: ["" : "",
+                                                      "api_key": NetworkManager.FilmApiKey])
         }
     }
     

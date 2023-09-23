@@ -37,7 +37,7 @@ class TopratedFilmsDataSet {
 
     let networkManager: NetworkManager!
     private let updatedPublisher = PublishSubject<Void>()
-    let paginator = Paginatable<Film>()
+
     
     //MARK: - Lifecycle
     init(networkManager: NetworkManager) {
@@ -45,7 +45,6 @@ class TopratedFilmsDataSet {
     }
     
     deinit {
-        // need to cancel API request
 }
     
     fileprivate var _collections = [FilmCollection]()
@@ -54,20 +53,7 @@ class TopratedFilmsDataSet {
 extension TopratedFilmsDataSet {
     
     func fetch() {
-        networkManager.getTopRated(page: 1) { films, error in
-            if let error = error {
-                print(error)
-                self.updatedPublisher.onNext(())
-            }
-            if let films = films {
-                self.fetchedFilms.append(contentsOf: films)
-                self.updatedPublisher.onNext(())
-            }
-        }
-    }
-    
-    func fetchNextPage() {
-        networkManager.getTopRated(page: self.page) { films, error in
+        networkManager.getPopularFilms(page: self.page) { films, error in
             if let error = error {
                 print(error)
                 self.updatedPublisher.onNext(())
@@ -81,7 +67,7 @@ extension TopratedFilmsDataSet {
     }
     
     func updateSectionCollection() {
-            _collections = [FilmCollection(title: "Top Rated", videos: fetchedFilms)]
+            _collections = [FilmCollection(title: "Popular Films", videos: fetchedFilms)]
         print("Collection generated \(collections.count)")
     }
 }

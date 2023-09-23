@@ -19,26 +19,36 @@ class FilmsViewModel {
     var sectionItems: Observable<[TopratedFilmsDataSet.FilmCollection]> {
         return sectionItemsPublisher.asObservable()
     }
+    
+    var paginatedItems: Observable<[TopratedFilmsDataSet.FilmCollection]> {
+        return paginatedItemsPublisher.asObservable()
+    }
 
     
     //MARK: - Properties
     let networkManager: NetworkManager
-    let topRatedFilms: TopratedFilmsDataSet
+    let popularFilms: TopratedFilmsDataSet
     
     private(set) var collections: [TopratedFilmsDataSet.FilmCollection] = [] {
         didSet {
-            sectionItemsPublisher.onNext(collections)
+            if oldValue.count == 0 {
+                sectionItemsPublisher.onNext(collections)
+            } else {
+                paginatedItemsPublisher.onNext(collections)
+            }
+            
         }
     }
     
     private let sectionItemsPublisher = PublishSubject<[TopratedFilmsDataSet.FilmCollection]>()
+    private let paginatedItemsPublisher = PublishSubject<[TopratedFilmsDataSet.FilmCollection]>()
     private let openFilmPublisher = BehaviorSubject<Film?>(value: nil)
     
     
     //MARK: - Lifecycle
     init(networkManager: NetworkManager) {
         self.networkManager = networkManager
-        topRatedFilms = .init(networkManager: networkManager)
+        popularFilms = .init(networkManager: networkManager)
         setupDataSetBindings()
     }
     
@@ -53,11 +63,7 @@ class FilmsViewModel {
     }
     
     func didSelectFilm(index: Int) {
-        guard index >= 0, index < topRatedFilms.fetchedFilms.count else {
-            return
-        }
-        
-        openFilmPublisher.onNext(topRatedFilms.fetchedFilms[index])
+        openFilmPublisher.onNext(popularFilms.fetchedFilms[index])
     }
     
     func paginateFilms() {
@@ -67,13 +73,13 @@ class FilmsViewModel {
     //MARK: - Private Methods
     
     func loadContent() {
-        topRatedFilms.fetchNextPage()
+        popularFilms.fetch()
     }
 }
 
 private extension FilmsViewModel {
     func setupDataSetBindings() {
-        topRatedFilms.updated
+        popularFilms.updated
             .bind(onNext: { [unowned self] _ in
                generateSections()
             })
@@ -81,6 +87,6 @@ private extension FilmsViewModel {
     
     func generateSections() {
         self.collections = [TopratedFilmsDataSet.FilmCollection(
-            title: "Top Rated", videos: topRatedFilms.fetchedFilms)]
+            title: "Top Rated", videos: popularFilms.fetchedFilms)]
     }
 }

@@ -116,5 +116,117 @@
             landmarkType = "24">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "0B8C6435-B9F4-4EDC-B20F-31DBF08A3BFB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "pet-TMDB-app/Scenes/Feed/FeedViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "19"
+            endingLineNumber = "19"
+            landmarkName = "searchBarButtonItem"
+            landmarkType = "24">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BA9C833F-7FC2-4E4D-8345-8AECF3B51BD7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "pet-TMDB-app/Scenes/Details/DetailsViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "154"
+            endingLineNumber = "154"
+            landmarkName = "bind()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BA9C833F-7FC2-4E4D-8345-8AECF3B51BD7 - 837baa9798ffa58b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "pet_TMDB_app.DetailsViewController.bind() -&gt; ()"
+                  moduleName = "pet-TMDB-app"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/AlexMokrousov/Documents/SWIFT/pet-TMDB-app/pet-TMDB-app/Scenes/Details/DetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "144"
+                  endingLineNumber = "144"
+                  offsetFromSymbolStart = "48">
+               </Location>
+               <Location
+                  uuid = "BA9C833F-7FC2-4E4D-8345-8AECF3B51BD7 - eab95d10b08c5f6c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (()) -&gt; () in pet_TMDB_app.DetailsViewController.bind() -&gt; ()"
+                  moduleName = "pet-TMDB-app"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/AlexMokrousov/Documents/SWIFT/pet-TMDB-app/pet-TMDB-app/Scenes/Details/DetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "142"
+                  endingLineNumber = "142"
+                  offsetFromSymbolStart = "32">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B16F64F7-FFD8-474F-B4A9-93D6AFCA4054"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "pet-TMDB-app/Scenes/Details/DetailsViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "136"
+            endingLineNumber = "136"
+            landmarkName = "configureFilmData()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B16F64F7-FFD8-474F-B4A9-93D6AFCA4054 - 8f3b5bdaffee7c4d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "pet_TMDB_app.DetailsViewController.setupUI() -&gt; ()"
+                  moduleName = "pet-TMDB-app"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/AlexMokrousov/Documents/SWIFT/pet-TMDB-app/pet-TMDB-app/Scenes/Details/DetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "127"
+                  endingLineNumber = "127"
+                  offsetFromSymbolStart = "1188">
+               </Location>
+               <Location
+                  uuid = "B16F64F7-FFD8-474F-B4A9-93D6AFCA4054 - 6a9a74889ccaa34e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "pet_TMDB_app.DetailsViewController.configureFilmData() -&gt; ()"
+                  moduleName = "pet-TMDB-app"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/AlexMokrousov/Documents/SWIFT/pet-TMDB-app/pet-TMDB-app/Scenes/Details/DetailsViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "127"
+                  endingLineNumber = "127"
+                  offsetFromSymbolStart = "448">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

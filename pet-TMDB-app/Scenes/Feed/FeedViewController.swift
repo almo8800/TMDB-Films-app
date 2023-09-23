@@ -7,35 +7,27 @@ import Kingfisher
 
 class FeedViewController: UIViewController, Coordinating {
     var coordinator: Coordinator?
-    
     let viewModel: FilmsViewModel
     
-    // MARK: - UI Setup
-    
-    private lazy var navigationTitleView: UIView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(named: "playstation.logo")
-        imageView.contentMode = .scaleAspectFit
-        
-        return imageView
-    }()
+    // MARK: - User Interface
     
     private lazy var searchBarButtonItem: UIBarButtonItem = {
-        let item = UIBarButtonItem(image: UIImage(named: "magnifyingglass.circle.fill"), style: .plain, target: nil, action: nil)
+        let item = UIBarButtonItem(image: UIImage(systemName: "magnifyingglass.circle"), style: .plain, target: nil, action: nil)
         item.tintColor = .black
         item.rx.tap
             .bind { [unowned self] (_) in
+               showAlert()
         }.disposed(by: disposeBag)
         
         return item
     }()
+    
+    var collectionView: UICollectionView!
 
     // MARK: - Properties
-    private let disposeBag = DisposeBag()
     
+    private let disposeBag = DisposeBag()
     var networkManager: NetworkManager!
-    var collectionView: UICollectionView!
-  
     var delegate: FeedControllerDelegate?
     
     var dataSource: UICollectionViewDiffableDataSource
@@ -43,15 +35,14 @@ class FeedViewController: UIViewController, Coordinating {
     var currentSnapshot: NSDiffableDataSourceSnapshot
         <TopratedFilmsDataSet.FilmCollection, Film>! = nil
     
-    
     static let titleElementKind = "title-element-kind"
+    private var lastContentOffset: CGPoint = .zero
 
     // MARK: - Overriden methods
     
     init(viewModel: FilmsViewModel) {
         self.viewModel = viewModel
         super.init(nibName: nil, bundle: nil)
-        
     }
     
     required init?(coder: NSCoder) {
@@ -60,19 +51,14 @@ class FeedViewController: UIViewController, Coordinating {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .white
-        navigationItem.title = "TEST"
+        navigationItem.title = "TMDB"
+        view.backgroundColor = .white
         
         viewModel.viewDidLoadTrigger()
-        
         setupUI()
         bind()
-        configureHierarchy()
-        configureDataSource()
-        updateSnapshot()
-        
-        
     }
+    
     
     // MARK: - UI Setuo
     func setupUI() {
@@ -80,14 +66,10 @@ class FeedViewController: UIViewController, Coordinating {
 }
     
     private func setupNavBarItems() {
-        
-        let image = UIImage(systemName: "pencil.circle")
-        let button = UIButton(type: .custom)
-        button.tintColor = .black
-        button.setImage(image, for: .normal)
-        let barButtonItem = UIBarButtonItem(customView: button)
-        navigationItem.rightBarButtonItems = [barButtonItem]
+        navigationItem.rightBarButtonItem = searchBarButtonItem
     }
+    
+    //MARK: - Binding
     
     func bind() {
         viewModel.sectionItems
@@ -96,12 +78,16 @@ class FeedViewController: UIViewController, Coordinating {
                 
                 configureHierarchy()
                 configureDataSource()
-                updateSnapshot()
-
-                
+        
                 collectionView.delegate = self
                 
             }.disposed(by: disposeBag)
+        
+        viewModel.paginatedItems
+            .observe(on: MainScheduler.instance)
+            .bind { [unowned self] _ in
+                updateSnapshot()
+            }
         
         viewModel.openFilm
             .observe(on: MainScheduler.instance)
@@ -112,6 +98,7 @@ class FeedViewController: UIViewController, Coordinating {
             }
     }
 
+//MARK: - Compositional Collection Layout
 
 extension FeedViewController {
     func createLayout() -> UICollectionViewLayout {
@@ -157,7 +144,7 @@ extension FeedViewController {
     func configureHierarchy() {
         collectionView = UICollectionView(frame: .zero, collectionViewLayout: createLayout())
         collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.backgroundColor = .gray
+        collectionView.backgroundColor = .lightGray
         
         view.addSubview(collectionView)
         NSLayoutConstraint.activate([
@@ -173,27 +160,20 @@ extension FeedViewController {
         let cellRegistration = UICollectionView.CellRegistration
         <FilmCell, Film> { (cell, IndexPath, video) in
             // Populate the cell with our item description.
-            
             cell.titleLabel.text = video.title
-            cell.categoryLabel.text = video.overview
-            
+            cell.descriptionLabel.text = video.overview
             let url = URL(string: "\(FilmApi.baseImageURL)\(video.backdrop)")
             cell.imageView.kf.setImage(with: url)
-            
             cell.contentView.isUserInteractionEnabled = false
             // поставить placeHolder в KingFisher (или в ячейке картинку по дефолту)
         }
         
         dataSource = UICollectionViewDiffableDataSource
-        
-        
-       
         <TopratedFilmsDataSet.FilmCollection, Film>(collectionView: collectionView) {
             (collectionView: UICollectionView, indexPath: IndexPath, video: Film) -> UICollectionViewCell? in
             // Return the cell.
             return collectionView.dequeueConfiguredReusableCell(using: cellRegistration, for: indexPath, item: video)
         }
-        
         let supplementaryRegistration = UICollectionView.SupplementaryRegistration
         <TitleSupplementaryView>(elementKind: FeedViewController.titleElementKind) {
             (supplementaryView, string, indexPath) in
@@ -209,44 +189,63 @@ extension FeedViewController {
                 using: supplementaryRegistration, for: index)
         }
         
-//        currentSnapshot = NSDiffableDataSourceSnapshot
-//        <TopratedFilmsDataSet.FilmCollection, Film>()
-//
-//            viewModel.collections.forEach {
-//                let collection = $0
-//                currentSnapshot.appendSections([collection])
-//                currentSnapshot.appendItems(collection.videos)
-//            }
-//            dataSource.apply(currentSnapshot, animatingDifferences: false)
+        currentSnapshot = NSDiffableDataSourceSnapshot
+        <TopratedFilmsDataSet.FilmCollection, Film>()
+        
+            viewModel.collections.forEach {
+                let collection = $0
+                currentSnapshot.appendSections([collection])
+                currentSnapshot.appendItems(collection.videos)
+            }
+            dataSource.apply(currentSnapshot, animatingDifferences: false)
+        
+        
     }
     
     func updateSnapshot() {
-    currentSnapshot = NSDiffableDataSourceSnapshot
-    <TopratedFilmsDataSet.FilmCollection, Film>()
-    
+        currentSnapshot = NSDiffableDataSourceSnapshot
+        <TopratedFilmsDataSet.FilmCollection, Film>()
+        
         viewModel.collections.forEach {
             let collection = $0
             currentSnapshot.appendSections([collection])
             currentSnapshot.appendItems(collection.videos)
         }
-        dataSource.apply(currentSnapshot, animatingDifferences: false)
+    
+        dataSource.applySnapshotUsingReloadData(currentSnapshot, completion: nil)
     }
-
 }
+
+//MARK: - UICollectionViewDelegate
 
 extension FeedViewController: UICollectionViewDelegate {
    
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let filmIndex = indexPath[1]
+        let filmIndex = indexPath.row
         viewModel.didSelectFilm(index: filmIndex)
     }
     
     func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        if indexPath.row == viewModel.topRatedFilms.fetchedFilms.count-2 {
+        if indexPath.row == viewModel.popularFilms.fetchedFilms.count-2 {
             // fetchedFilms отдавать вo ViewModel сразу?
+            lastContentOffset = collectionView.contentOffset
             viewModel.paginateFilms()
-            
+            lastContentOffset = collectionView.contentOffset
         }
     }
-    
+}
+
+//MARK: - Alert
+
+extension FeedViewController {
+    func showAlert() {
+        let alertController = UIAlertController(title: "Search is not ready", message: "Waiting for next version", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "OK", style: .default) { (_) in
+            print("OK button tapped")
+        }
+        
+        alertController.addAction(okAction)
+        present(alertController, animated: true, completion: nil)
+    }
+
 }
