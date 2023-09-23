@@ -23,7 +23,6 @@ class FilmsViewModel {
     var paginatedItems: Observable<[TopratedFilmsDataSet.FilmCollection]> {
         return paginatedItemsPublisher.asObservable()
     }
-
     
     //MARK: - Properties
     let networkManager: NetworkManager
@@ -52,11 +51,6 @@ class FilmsViewModel {
         setupDataSetBindings()
     }
     
-    
-    //MARK: - Private methods
-    
-              
-    
     //MARK: - Input
     func viewDidLoadTrigger() {
         loadContent()
@@ -78,14 +72,14 @@ class FilmsViewModel {
 }
 
 private extension FilmsViewModel {
-    func setupDataSetBindings() {
+    private func setupDataSetBindings() {
         popularFilms.updated
             .bind(onNext: { [unowned self] _ in
                generateSections()
             })
     }
     
-    func generateSections() {
+    private func generateSections() {
         self.collections = [TopratedFilmsDataSet.FilmCollection(
             title: "Top Rated", videos: popularFilms.fetchedFilms)]
     }

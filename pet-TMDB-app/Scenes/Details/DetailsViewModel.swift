@@ -14,10 +14,10 @@ class DetailsViewModel {
     var filmObservable: Observable<Void> {
         return filmDetailsPublisher.asObservable()
     }
-
+    
     //MARK: - Properties
     
-    let networkManager: NetworkManager!
+    private let networkManager: NetworkManager!
     let filmId: Int
     var filmDetails: FilmDetailsApiResponse? {
         didSet {
@@ -39,7 +39,7 @@ class DetailsViewModel {
         
     }
     
-    func downloadFilmDetails() {
+    private func downloadFilmDetails() {
         networkManager.getFilmDetails(id: filmId) { details, error in
             if let error = error {
                 print(error)
@@ -49,7 +49,4 @@ class DetailsViewModel {
             }
         }
     }
-    
-    
-    
 }

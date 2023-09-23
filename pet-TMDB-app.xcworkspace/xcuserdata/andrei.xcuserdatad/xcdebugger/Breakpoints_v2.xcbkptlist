@@ -142,8 +142,8 @@
             filePath = "pet-TMDB-app/Scenes/Details/DetailsViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "154"
-            endingLineNumber = "154"
+            startingLineNumber = "153"
+            endingLineNumber = "153"
             landmarkName = "bind()"
             landmarkType = "7">
             <Locations>
@@ -190,8 +190,8 @@
             filePath = "pet-TMDB-app/Scenes/Details/DetailsViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "136"
-            endingLineNumber = "136"
+            startingLineNumber = "135"
+            endingLineNumber = "135"
             landmarkName = "configureFilmData()"
             landmarkType = "7">
             <Locations>

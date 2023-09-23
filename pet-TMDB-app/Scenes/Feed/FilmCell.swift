@@ -11,7 +11,6 @@ class FilmCell: UICollectionViewCell {
         imageView.contentMode = .scaleAspectFill
         
         return imageView
-        
     }()
     
     lazy var titleLabel: UILabel = {

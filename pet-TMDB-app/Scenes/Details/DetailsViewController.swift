@@ -15,13 +15,11 @@ import Kingfisher
 
 class DetailsViewController: UIViewController, Coordinating {
     
-    private let disposeBag = DisposeBag()
-    
     //MARK: - User Interface
     
     private lazy var posterImageView: UIImageView = {
         let imageView = UIImageView()
-        imageView.backgroundColor = .red
+        imageView.backgroundColor = .white
         imageView.contentMode = .scaleAspectFill
         return imageView
     }()
@@ -64,7 +62,8 @@ class DetailsViewController: UIViewController, Coordinating {
     //MARK: - Properties
     
     var coordinator: Coordinator?
-    let viewModel: DetailsViewModel
+    private let viewModel: DetailsViewModel
+    private let disposeBag = DisposeBag()
     
     //MARK: - LifeCycle
     
@@ -94,7 +93,7 @@ class DetailsViewController: UIViewController, Coordinating {
     
     // MARK: - UI Setup
     
-    func setupUI() {
+    private func setupUI() {
         view.addSubview(posterImageView)
         posterImageView.snp.makeConstraints { make in
             make.leading.equalTo(view)
@@ -131,7 +130,7 @@ class DetailsViewController: UIViewController, Coordinating {
     
     // MARK: - Data Bindings
     
-    func configureFilmData() {
+    private func configureFilmData() {
         if let posterPath = viewModel.filmDetails?.posterPath {
             let urlString = FilmApi.baseImageURL.absoluteString + posterPath
             let url = URL(string: urlString)
@@ -146,15 +145,15 @@ class DetailsViewController: UIViewController, Coordinating {
             }
         }
     }
-        
-        func bind() {
-            viewModel.filmObservable
-                .observe(on: MainScheduler.instance)
-                .subscribe(onNext: { [unowned self] (_) in
-                    self.configureFilmData()
-                }).disposed(by: disposeBag)
-        }
+    
+    private func bind() {
+        viewModel.filmObservable
+            .observe(on: MainScheduler.instance)
+            .subscribe(onNext: { [unowned self] (_) in
+                self.configureFilmData()
+            }).disposed(by: disposeBag)
     }
-    
-    
+}
+
+
 

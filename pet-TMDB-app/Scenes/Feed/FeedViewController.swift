@@ -7,7 +7,7 @@ import Kingfisher
 
 class FeedViewController: UIViewController, Coordinating {
     var coordinator: Coordinator?
-    let viewModel: FilmsViewModel
+    private let viewModel: FilmsViewModel
     
     // MARK: - User Interface
     
@@ -22,17 +22,17 @@ class FeedViewController: UIViewController, Coordinating {
         return item
     }()
     
-    var collectionView: UICollectionView!
+    private var collectionView: UICollectionView!
 
     // MARK: - Properties
     
     private let disposeBag = DisposeBag()
-    var networkManager: NetworkManager!
-    var delegate: FeedControllerDelegate?
+    private var networkManager: NetworkManager!
+    private var delegate: FeedControllerDelegate?
     
-    var dataSource: UICollectionViewDiffableDataSource
+    private var dataSource: UICollectionViewDiffableDataSource
         <TopratedFilmsDataSet.FilmCollection, Film>! = nil
-    var currentSnapshot: NSDiffableDataSourceSnapshot
+    private var currentSnapshot: NSDiffableDataSourceSnapshot
         <TopratedFilmsDataSet.FilmCollection, Film>! = nil
     
     static let titleElementKind = "title-element-kind"
@@ -59,9 +59,8 @@ class FeedViewController: UIViewController, Coordinating {
         bind()
     }
     
-    
     // MARK: - UI Setuo
-    func setupUI() {
+    private func setupUI() {
         setupNavBarItems()
 }
     
@@ -71,7 +70,7 @@ class FeedViewController: UIViewController, Coordinating {
     
     //MARK: - Binding
     
-    func bind() {
+    private func bind() {
         viewModel.sectionItems
             .observe(on: MainScheduler.instance)
             .bind { [unowned self] (items) in
@@ -198,8 +197,6 @@ extension FeedViewController {
                 currentSnapshot.appendItems(collection.videos)
             }
             dataSource.apply(currentSnapshot, animatingDifferences: false)
-        
-        
     }
     
     func updateSnapshot() {
@@ -211,7 +208,7 @@ extension FeedViewController {
             currentSnapshot.appendSections([collection])
             currentSnapshot.appendItems(collection.videos)
         }
-    
+
         dataSource.applySnapshotUsingReloadData(currentSnapshot, completion: nil)
     }
 }
@@ -238,7 +235,7 @@ extension FeedViewController: UICollectionViewDelegate {
 //MARK: - Alert
 
 extension FeedViewController {
-    func showAlert() {
+    private func showAlert() {
         let alertController = UIAlertController(title: "Search is not ready", message: "Waiting for next version", preferredStyle: .alert)
         let okAction = UIAlertAction(title: "OK", style: .default) { (_) in
             print("OK button tapped")
