@@ -11,6 +11,7 @@
 **Технологии** :wrench: 
 - UIKit
 - Compositional Layout
+- SnapKit
 - URLSession (написал собственный сетевой слой)
 - MVVM-С
 - RxSwift
